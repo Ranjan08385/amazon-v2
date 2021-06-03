@@ -18,7 +18,7 @@ const ProductFeed = ({ products }) => {
         ))}
 
       <img
-        className="md:col-span-full mx-3"
+        className="md:col-span-full pl-2"
         src="https://links.papareact.com/dyz"
         alt=""
       />

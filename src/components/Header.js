@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import {
   MenuIcon,
@@ -8,14 +9,28 @@ import { signIn, signOut, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { selectItems } from "../slices/basketSlice";
+import SearchData from "../data/Search.json";
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const [session] = useSession();
   const router = useRouter();
   const items = useSelector(selectItems);
 
+  const onClickSearchItem = (value) => {
+    setSearchTerm(value);
+    setShowSearch(false);
+  };
+
+  const setSearchValue = (value) => {
+    console.log(value);
+    setSearchTerm(value);
+    setShowSearch(true);
+  };
+
   return (
-    <header>
+    <header className="top-0 z-50 sticky">
       <div className="flex align-center bg-amazon_blue p-1 flex-grow py-2">
         <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
@@ -31,9 +46,25 @@ const Header = () => {
           <input
             className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-md focus:outline-none"
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
           <SearchIcon className="h-12 p-4" />
         </div>
+        {showSearch && searchTerm ? (
+          <div className="absolute bg-white left-40 top-16 p-2 w-4/6 shadow-lg">
+            {SearchData.map((value, i) => (
+              <p
+                key={i}
+                className="p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => onClickSearchItem(value.Search)}
+              >
+                {value.Search}
+              </p>
+            ))}
+          </div>
+        ) : null}
+
         <div className="text-white flex items-center text-xs space-x-6 mx-6 whitespace-nowrap">
           <div onClick={!session ? signIn : signOut} className="link">
             <p>{session ? `Hello, ${session.user.name}` : "Sign In"}</p>
